@@ -1,1 +1,19 @@
-
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DemandVision</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#0b1020;color:#f5f7ff;min-height:100vh}.wrap{max-width:1050px;margin:auto;padding:42px 20px}.hero{padding:34px 0 24px}.tag{display:inline-block;padding:7px 11px;border:1px solid #303a5c;border-radius:999px;color:#9fb0df;font-size:12px}.hero h1{font-size:48px;margin:16px 0 8px}.hero p{color:#aab3cc;font-size:17px}.card{background:#121a2e;border:1px solid #26304b;border-radius:18px;padding:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.input{display:flex;gap:10px}.input input{flex:1;padding:14px;border-radius:10px;border:1px solid #34405f;background:#0d1426;color:white;font-size:16px}.input button{padding:14px 20px;border:0;border-radius:10px;background:#eef2ff;color:#11182a;font-weight:700;cursor:pointer}.result{margin-top:20px;display:none}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.stat{padding:15px;background:#0d1426;border-radius:12px}.stat small{color:#8995b3}.stat b{display:block;font-size:21px;margin-top:6px}.status{margin-top:18px;padding:14px;border-radius:12px;background:#1c2945}.error{color:#ffb4b4}.foot{margin-top:24px;color:#74809d;font-size:13px}@media(max-width:700px){.grid,.stats{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}}@media(max-width:450px){.grid,.stats{grid-template-columns:1fr}.input{flex-direction:column}}
+</style>
+</head>
+<body><div class="wrap">
+<section class="hero"><span class="tag">AI RETAIL DEMAND FORECASTING</span><h1>DemandVision</h1><p>Predict product demand and get an inventory recommendation using the trained Random Forest model.</p></section>
+<div class="grid"><div class="card"><h2>Product prediction</h2><p style="color:#8995b3">Enter a Product ID, for example <b>P0020</b>.</p><div class="input"><input id="pid" placeholder="P0020"><button onclick="predict()">Predict</button></div><div id="msg" style="margin-top:14px"></div><div id="result" class="result"><div class="stats"><div class="stat"><small>Predicted demand</small><b id="pred">-</b></div><div class="stat"><small>Actual demand</small><b id="actual">-</b></div><div class="stat"><small>Inventory</small><b id="inv">-</b></div><div class="stat"><small>Units sold</small><b id="sold">-</b></div></div><div class="status" id="recommendation"></div></div></div>
+<div class="card"><h2>Model overview</h2><p style="color:#aab3cc">The deployed API loads the saved preprocessing artifacts and RandomForest model at startup.</p><div class="stats"><div class="stat"><small>R²</small><b>0.9935</b></div><div class="stat"><small>MAE</small><b>7.5639</b></div><div class="stat"><small>RMSE</small><b>8.8319</b></div><div class="stat"><small>Model</small><b>RF</b></div></div></div></div>
+<div class="foot">DemandVision · Flask API · Production deployment</div>
+</div>
+<script>
+async function predict(){const pid=document.getElementById('pid').value.trim();const msg=document.getElementById('msg');const result=document.getElementById('result');msg.className='';msg.textContent='';result.style.display='none';if(!pid){msg.className='error';msg.textContent='Please enter a Product ID.';return}try{const r=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:pid})});const d=await r.json();if(!r.ok){msg.className='error';msg.textContent=d.error||'Prediction failed.';return}document.getElementById('pred').textContent=d.predicted_demand;document.getElementById('actual').textContent=d.actual_demand;document.getElementById('inv').textContent=d.inventory;document.getElementById('sold').textContent=d.units_sold;document.getElementById('recommendation').textContent=d.recommendation;result.style.display='block'}catch(e){msg.className='error';msg.textContent='Server connection failed.'}}
+document.getElementById('pid').addEventListener('keydown',e=>{if(e.key==='Enter')predict()});
+</script></body></html>
