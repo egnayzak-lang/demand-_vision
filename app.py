@@ -7,7 +7,7 @@ import numpy as np
 BASE = Path(__file__).resolve().parent
 MODEL_DIR = BASE / "model"
 
-app = Flask(__name__, tamplate_folder='templates')
+app = Flask(__name__)
 
 def load_artifacts():
     names = ["ai_model.pkl", "encoder.pkl", "scaler.pkl", "feature_columns.pkl",
